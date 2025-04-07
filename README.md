@@ -34,7 +34,7 @@ Before running the app, make sure you have the following installed:
 
    ```bash
    git clone https://github.com/your-username/tinder-for-anime.git
-   cd tinder-for-anime
+   cd anime
    ```
 
 2. **Set up a virtual environment (optional but recommended)**:
@@ -78,9 +78,9 @@ Before running the app, make sure you have the following installed:
 ## **Project Structure**
 
 ```
-tinder-for-anime/
+anime/
 │
-├── anime_app/
+├── core/
 │   ├── migrations/
 │   ├── __init__.py
 │   ├── admin.py
@@ -90,7 +90,7 @@ tinder-for-anime/
 │   ├── urls.py          # Define URLs for the app
 │   ├── templates/
 │   │   └── anime_app/
-│   │       └── index.html
+│   │       └── swipe.html
 │   └── static/
 │       └── core/
 │           └── images/   # Store anime images here
@@ -100,17 +100,6 @@ tinder-for-anime/
 └── README.md            # This file
 ```
 
-### **Frontend Files**
-
-- **`index.html`**: The main HTML file where the anime cards are rendered. This file uses Django template tags to display dynamic data passed from the backend.
-- **`style.css`**: The CSS file that defines the layout, swipe animations, and UI design.
-- **JavaScript**: The script that handles the swipe functionality, using mouse or touch events to detect swipe direction and animate the cards.
-
-### **Backend Files**
-
-- **`models.py`**: Contains the `Anime` model, which stores the data for each anime character.
-- **`views.py`**: Defines the views that handle rendering anime cards to the template and processing user interactions.
-- **`urls.py`**: Defines the URL routes for the app.
 
 ## **Usage**
 
