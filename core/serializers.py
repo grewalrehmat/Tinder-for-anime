@@ -4,7 +4,10 @@ from .models import Anime,Swipe
 class AnimeSerializer (serializers.ModelSerializer):
     class Meta:
         model = Anime
-        fields = ['id','title','description','genres']
+        fields = [
+            'anime_id', 'title', 'title_english', 'image_url',
+            'genre', 'score', 'episodes', 'status', 'background'
+        ]
 
 class SwipeSerializer(serializers.ModelSerializer):
     class Meta:

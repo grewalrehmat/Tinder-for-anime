@@ -1,144 +1,129 @@
 <!DOCTYPE html>
-{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anime Swipe</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Swipe Anime</title>
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
-            background: #f0f0f0;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: #fff;
             display: flex;
             justify-content: center;
             align-items: center;
+            height: 100vh;
+            margin: 0;
         }
 
         .swipe-container {
-            position: relative;
-            width: 400px;
-            height: 500px;
-            overflow: hidden;
-            border-radius: 20px;
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
-            background: rgba(0, 0, 0, 0.6);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .swipe-container img {
-            width: 100%;
-            height: 100%;
-            border-radius: 15px;
-            object-fit: cover;
-        }
-
-        .swipe-content {
-            padding: 15px;
-            text-align: left;
-            background-color: rgba(0, 0, 0, 0.6);
+            text-align: center;
+            max-width: 400px;
+            background-color: #1e1e1e;
+            padding: 20px;
             border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
 
-        .anime-title {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #ffeb3b;
+        .swipe-content img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 20px;
         }
 
-        .anime-description {
-            font-size: 1.1rem;
-            color: #e0e0e0;
-            margin-top: 10px;
+        .swipe-content h2 {
+            margin-bottom: 10px;
+            font-size: 24px;
+            color: #f06292;
         }
 
-        .swipe-buttons {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
+        .swipe-content p {
+            margin-bottom: 20px;
+            font-size: 16px;
         }
 
-        .swipe-btn {
-            padding: 10px 20px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 30px;
+        .swipe-buttons button {
+            background-color: #2a2a2a;
+            color: #fff;
             border: none;
+            padding: 12px 25px;
+            margin: 0 10px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background 0.3s ease, transform 0.3s ease;
-            text-transform: uppercase;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
         }
 
-        .swipe-btn.like {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .swipe-btn.dislike {
-            background-color: #FF5252;
-            color: white;
-        }
-
-        .swipe-btn:hover {
-            transform: scale(1.1);
+        .swipe-buttons button:hover {
+            background-color: #f06292;
         }
     </style>
 </head>
 <body>
-
-<div class="swipe-container" id="swipe-container">
-    <img id="anime-image" src="{% static 'core/images/OP.jpeg' %}" alt="Anime Image">
-    <div class="swipe-content">
-        <div class="anime-title" id="anime-title">Anime Title</div>
-        <div class="anime-description" id="anime-description">Anime Description</div>
+    <div class="swipe-container">
+        <div class="swipe-content">
+            <img id="anime-image" src="" alt="Anime Image">
+            <h2 id="anime-name">Anime Name</h2>
+            <p id="anime-description">Anime Description</p>
+            <input type="hidden" id="anime-id">
+        </div>
+        <div class="swipe-buttons">
+            <button onclick="swipe('left')">👎 Swipe Left</button>
+            <button onclick="swipe('right')">👍 Swipe Right</button>
+        </div>
     </div>
-    <div class="swipe-buttons">
-        <button class="swipe-btn dislike" onclick="swipe('dislike')">Dislike</button>
-        <button class="swipe-btn like" onclick="swipe('like')">Like</button>
-    </div>
-</div>
 
-<script>
-    // Function to load the next anime
-    function loadNextAnime() {
-        fetch('/api/swipe/anime/')
-            .then(response => response.json())
-            .then(data => {
-                // Update the anime content
-                document.getElementById('anime-title').textContent = data.title;
-                document.getElementById('anime-description').textContent = data.description;
-                document.getElementById('anime-image').src = data.image_url;  // Assume you have an image URL in the API response
-            });
-    }
-
-    // Function to handle the swipe
-    function swipe(type) {
-        let animeId = document.getElementById('anime-id').value;  // Get the current anime's ID
-        fetch('/api/swipe/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                anime_id: animeId,
-                swipe_type: type
-            })
-        }).then(response => {
-            if (response.ok) {
-                // Load the next anime after the swipe is saved
-                loadNextAnime();
+    <script>
+        async function getNextAnime() {
+            try {
+                const response = await fetch('/api/swipe/anime/');
+                if (!response.ok) throw new Error('Failed to load anime');
+                const data = await response.json();
+                console.log("Fetched anime data:", data);
+                document.getElementById('anime-image').src = data.image_url || 'https://via.placeholder.com/300x400?text=Anime';
+                document.getElementById('anime-name').innerText = data.title_english || data.title || 'No Name';
+                document.getElementById('anime-description').innerText = data.synopsis || 'No Description';
+                document.getElementById('anime-id').value = data.anime_id;
+            } catch (error) {
+                console.error('Error fetching anime:', error);
             }
-        });
-    }
+        }
 
-    // Initialize the page with the first anime
-    loadNextAnime();
-</script>
+        async function swipe(direction) {
+            const animeIdInput = document.getElementById('anime-id');
 
+            if (!animeIdInput) {
+                console.error('anime-id element not found.');
+                return;
+            }
+
+            const animeId = animeIdInput.value;
+
+            if (!animeId) {
+                console.error('Anime ID value is empty.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/anime/action/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        anime_id: animeId,
+                        direction: direction
+                    })
+                });
+
+                if (!response.ok) throw new Error('Swipe failed');
+
+                getNextAnime(); // Load next anime after swipe
+            } catch (error) {
+                console.error('Swipe error:', error);
+            }
+        }
+
+        window.onload = getNextAnime;
+    </script>
 </body>
 </html>
